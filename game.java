@@ -25,6 +25,8 @@ public class Game {
 	JTextArea mainTextArea;
 	int playerHP;
 	int coins;
+	int monsterHP;
+	int ring;
 	String weapon, gameState;
 	
 	TitleScreenHandler tsHandler = new TitleScreenHandler();
@@ -202,6 +204,7 @@ public class Game {
 	public void playerSetup() {
 //	Player parameters
 		playerHP = 25;
+		monsterHP = 20;
 		weapon = "Worn Dagger";
 		coins = 0;
 		weaponType.setText(weapon);
@@ -238,6 +241,9 @@ public class Game {
 		
 	}
 	public void restPoint() {
+		
+	}
+	public void bribeOpen() {
 		
 	}
 //	Village Gate
@@ -279,9 +285,7 @@ public class Game {
 	}
 	public void bribeGuard() {
 		gameState="bribeGuard";
-		mainTextArea.setText("You dig into your pockets,\n pulling out a piece of lint and 2 copper coins. \nYou decide to offer them in exchange for letting you pass by\n\n The Guard shakes his head, and laughs at you.\n\n Guard: Don't you have better things to do?\n don't give me your trash!");
-		coins=coins+2;
-		coinCount.setText(""+coins);
+		mainTextArea.setText("You dig into your pockets,\n pulling out a piece of lint and "+coins+" coins. \nYou decide to offer them in exchange for letting you pass by\n\n The Guard shakes his head, and laughs at you.\n\n Guard: Don't you have better things to do?\n don't give me your trash!");
 		option1.setText("Leave gates");
 		option2.setText("Sneak in");
 		option3.setText("Wander around");
@@ -377,11 +381,92 @@ public class Game {
 //	Monster encounter 
 	public void forest() {
 		gameState="forest";
-		mainTextArea.setText("You go deeper into the forest.");
+		mainTextArea.setText("You go deeper into the forest and encounter a  greater blue slime!");
+		option1.setText("Fight");
+		option2.setText("Run");
+		option3.setText("Items");
+		option4.setText("");
+	}
+	public void fightSlime() {
+		gameState="fightSlime";
+		mainTextArea.setText("Greater slime HP: "+ monsterHP);
 		option1.setText("Attack");
+		option2.setText("Run");
+		option3.setText("");
+		option4.setText("");
+	}
+	public void runAway() {
+		gameState="runAway";
+		mainTextArea.setText("You ran away safely, and head back to the Crossroads.");
+		option1.setText("Return to Village");
+		option2.setText("Go North");
+		option3.setText("Go East");
+		option4.setText("Go West");
+	}
+	public void ending() {
+		gameState = "ending";
+		mainTextArea.setText("The guard notices your sapphire ring.\n\nGuard:Oh you killed the greater slime?!\n That slime has been attacking this village for many moons.\n You are a true hero worthy of this town!\n\n The Guard opens the Village gate for you.");
+		option1.setText("");
 		option2.setText("");
 		option3.setText("");
 		option4.setText("");
+		option1.setVisible(false);
+		option2.setVisible(false);
+		option3.setVisible(false);
+		option4.setVisible(false);
+	}
+	public void playerAttack() {
+		gameState="playerAttack";
+		int playerDmg = 0;
+
+		if(weapon.equals("Worn Dagger")) {
+			playerDmg = new java.util.Random().nextInt(4);	
+		}
+		else if (weapon.equals("Long Sword")) {
+			playerDmg = new java.util.Random().nextInt(11);
+		}
+		
+		mainTextArea.setText("You attacked, and inflicted " +playerDmg+" damage! \n\nGreater slime HP: "+ monsterHP);
+		monsterHP = monsterHP - playerDmg;
+		option1.setText("Next Turn");
+		option2.setText("Run");
+		option3.setText("Items");
+		option4.setText("");
+	}
+	public void monsterAttack() {
+		gameState="monsterAttack";
+		int monsterDmg = 0;
+		monsterDmg= new java.util.Random().nextInt(6);
+		mainTextArea.setText("You were attacked and lost " +monsterDmg+" HP! \n\nGreater slime HP: "+ monsterHP);
+		playerHP = playerHP - monsterDmg;
+		hpNo.setText(""+playerHP);
+		option1.setText("Attack");
+		option2.setText("Run");
+		option3.setText("Items");
+		option4.setText("");
+	}
+	public void winBattle() {
+		gameState="winBattle";
+		mainTextArea.setText("You defeated the monster! The Monster dropped a sapphire ring!(You obtained a sapphire ring and 70 gold coins!)");
+		ring= 1;
+		coins=coins+70;
+		coinCount.setText(""+coins);
+		option1.setText("Crossroads");
+		option2.setText("Contuine East");
+		option3.setText("Rest");
+		option4.setText("");
+		
+	}
+	public void lossDeath() {
+		gameState="lossDeath";
+		mainTextArea.setText("You have no HP left, you collapse over and die.\n\n <GAME OVER!>");
+		
+		option1.setText("Enter Village");
+		option2.setText("");
+		option3.setText("");
+		option4.setText("");
+	
+		
 	}
 	
 	public class TitleScreenHandler implements ActionListener{
@@ -400,16 +485,36 @@ public class Game {
 			case "villageGate":
 //				Village gate options
 				switch(playerChoice) {
-				case "o1": talkGuard(); break;
+				case "o1": 
+					if (ring==1) {
+						ending();
+					}
+					else {
+						talkGuard();
+					}
+					break;
 				case "o2": attackGuard(); break;
 				case "o3": crossRoads(); break;
-				case "o4": bribeGuard(); break;
+				case "o4":
+					if (coins>=50) {
+						bribeOpen();
+					}
+					else {
+					bribeGuard(); 
+				}
 				}
 				break;
 			case "talkGuard":
 //				Talk options
 				switch(playerChoice) {
-				case "o1": villageGate(); break;
+				case "o1": 
+					if (ring==1) {
+						ending();
+					}
+					else {
+						talkGuard();
+					}
+					break;
 				case "o2": attackGuard(); break;
 				}
 				break;
@@ -487,6 +592,69 @@ public class Game {
 				case "o3": break;
 				case "o4": break;
 				}
+				break;
+			case "forest":
+				switch(playerChoice) {
+				case "o1": fightSlime();break;
+				case "o2": runAway(); break;
+				case "o3": break;
+				case "o4": break;
+				}
+				break;
+			case "fightSlime":
+				switch(playerChoice) {
+				case "o1": playerAttack();break;
+				case "o2": runAway(); break;
+				case "o3": break;
+				}
+				break;
+			case "runAway":
+				switch(playerChoice) {
+				case "o1": villageGate(); break;
+				case "o2": north(); break;
+				case "o3": east(); break;
+				case "o4": west();break;
+				}
+				break;
+			case "playerAttack":
+				switch(playerChoice) {
+				case "o1": 
+					if(monsterHP<1) {
+						winBattle();
+					}
+					else {
+					monsterAttack(); 
+					}
+					break;
+				case "o2": runAway(); break;
+				case "o3": break;
+				}
+				break;
+			case "monsterAttack":
+				switch(playerChoice) {
+				case "o1": 
+				if(playerHP<1) {
+					lossDeath();
+				}
+				else {
+					playerAttack(); 
+				}
+				break;
+				case "o2": runAway(); break;
+				case "o3": break;
+				}
+				break;
+			case "winBattle":
+				switch(playerChoice) {
+				case "o1": crossRoads(); break;
+				case "o2": farEast();break;
+				case "o3": break;
+				case "o4": break;
+				}
+				
+				
+				
+				
 	}
 		
 	}
