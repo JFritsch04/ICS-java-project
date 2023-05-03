@@ -15,8 +15,8 @@ import javax.swing.JTextArea;
 public class Game {
 	JFrame gamewindow;
 	Container contain;
-	JPanel titleNamePanel, startButtonPanel, dialoguePanel, optionsPanel, hotbarPanel;
-	JLabel titleNameText, hpLabel, hpNo, weaponLabel, weaponType;
+	JPanel titleNamePanel, startButtonPanel, dialoguePanel, optionsPanel, hotbarPanel, lowbarPanel;
+	JLabel titleNameText, hpLabel, hpNo, weaponLabel, weaponType, coinLabel, coinCount;
 	Font titleFont = new Font("Times New Roman", Font.PLAIN, 70);
 	Font startFont = new Font("Times New Roman", Font.PLAIN, 50);
 	Font hotbarFont = new Font("Times New Roman", Font.PLAIN, 24);
@@ -24,6 +24,7 @@ public class Game {
 	JButton startButton, option1, option2, option3, option4;
 	JTextArea mainTextArea;
 	int playerHP;
+	int coins;
 	String weapon, gameState;
 	
 	TitleScreenHandler tsHandler = new TitleScreenHandler();
@@ -152,10 +153,17 @@ public class Game {
 		optionsPanel.add(option4);
 		
 		hotbarPanel = new JPanel();
-		hotbarPanel.setBounds(100, 15, 600, 50);
+		hotbarPanel.setBounds(100, 15, 670, 50);
 		hotbarPanel.setBackground(Color.gray);
 		hotbarPanel.setLayout(new GridLayout(1,4));
 		contain.add(hotbarPanel);
+		
+		lowbarPanel = new JPanel();
+		lowbarPanel.setBounds(600, 450, 170, 50);
+		lowbarPanel.setBackground(Color.gray);
+		lowbarPanel.setLayout(new GridLayout(1,4));
+		contain.add(lowbarPanel);
+		
 //		HP Label
 		hpLabel= new JLabel("HP:");
 		hpLabel.setFont(hotbarFont);
@@ -176,6 +184,16 @@ public class Game {
 		weaponType.setFont(hotbarFont);
 		weaponType.setForeground(Color.white);
 		hotbarPanel.add(weaponType);
+//		Coins Label
+		coinLabel = new JLabel("COINS:");
+		coinLabel.setFont(hotbarFont);
+		coinLabel.setForeground(Color.white);
+		lowbarPanel.add(coinLabel);
+		
+		coinCount = new JLabel();
+		coinCount.setFont(hotbarFont);
+		coinCount.setForeground(Color.white);
+		lowbarPanel.add(coinCount);
 		
 		playerSetup();
 
@@ -183,10 +201,12 @@ public class Game {
 	}
 	public void playerSetup() {
 //	Player parameters
-		playerHP = 20;
+		playerHP = 25;
 		weapon = "Worn Dagger";
+		coins = 0;
 		weaponType.setText(weapon);
 		hpNo.setText(""+ playerHP);
+		coinCount.setText(""+coins);
 		
 		villageGate();
 		
@@ -195,8 +215,8 @@ public class Game {
 	public void village() {
 		gameState="village";
 		mainTextArea.setText("You finally managed to make your way inside.\n You decide to explore a bit.\nWhat should you do first?");
-		option1.setText("Find a Merchant");
-		option2.setText("Rest");
+		option1.setText("Head to the square");
+		option2.setText("Rest Area");
 		option3.setText("Leave Village");
 		option4.setText("Talk to locals");
 	}
@@ -207,6 +227,18 @@ public class Game {
 		option2.setText("Rest Area");
 		option3.setText("Item shop");
 		option4.setText("Leave Village Square");
+	}
+	public void talkVillagers() {
+		
+	}
+	public void weaponShop() {
+		
+	}
+	public void itemShop() {
+		
+	}
+	public void restPoint() {
+		
 	}
 //	Village Gate
 	public void villageGate() {
@@ -230,8 +262,8 @@ public class Game {
 		gameState="talkGuard";
 		mainTextArea.setText(" The Guard examines you.\n\nGuard: Hello, strange foreigner,\nI've never seen a face like yours before \nand due to strict village protocol,\n I cannot open the gate and allow you in.\n\n The Guard shoos you away.");
 		option1.setText("Leave");
-		option2.setText("Talk");
-		option3.setText("Attack");
+		option2.setText("Attack");
+		option3.setText("");
 		option4.setText("");
 	}
 	public void attackGuard() {
@@ -248,13 +280,15 @@ public class Game {
 	public void bribeGuard() {
 		gameState="bribeGuard";
 		mainTextArea.setText("You dig into your pockets,\n pulling out a piece of lint and 2 copper coins. \nYou decide to offer them in exchange for letting you pass by\n\n The Guard shakes his head, and laughs at you.\n\n Guard: Don't you have better things to do?\n don't give me your trash!");
+		coins=coins+2;
+		coinCount.setText(""+coins);
 		option1.setText("Leave gates");
 		option2.setText("Sneak in");
 		option3.setText("Wander around");
 		option4.setText("");
 		
 	}
-//	Crossroads
+//	Cross roads
 	public void crossRoads() {
 		gameState="crossRoads";
 		mainTextArea.setText("You wander away from the village towards some crossroads. You come across 3 different paths.\n\n Well now what?");
@@ -269,9 +303,17 @@ public class Game {
 		playerHP= playerHP+5;
 		hpNo.setText(""+playerHP);
 		option1.setText("Explore riverside");
-		option2.setText("Rest some more");
+		option2.setText("Rest again");
 		option3.setText("Contuine going North");
 		option4.setText("Head back");
+	}
+	public void farNorth() {
+		gameState="farNorth";
+		mainTextArea.setText("");
+		option1.setText("");
+		option2.setText("");
+		option3.setText("");
+		option4.setText("");
 	}
 	public void east() {
 		gameState="east";
@@ -282,6 +324,22 @@ public class Game {
 		option4.setText("Explore Forest");
 		
 	}
+	public void setCamp() {
+		gameState="setCamp";
+		mainTextArea.setText("");
+		option1.setText("");
+		option2.setText("");
+		option3.setText("");
+		option4.setText("");
+	}
+	public void farEast() {
+		gameState="farEast";
+		mainTextArea.setText("");
+		option1.setText("");
+		option2.setText("");
+		option3.setText("");
+		option4.setText("");
+	}
 	public void west() {
 		gameState="west";
 		mainTextArea.setText("");
@@ -291,17 +349,40 @@ public class Game {
 		option4.setText("");
 		
 	}
+//	Riverside
 	public void riverside() {
 		gameState= "riverside";
 		mainTextArea.setText("You come across a small chest hidden in a bush. Inside was a Steel Long sword and 50 gold coins!");
 		weapon="Long Sword";
 		weaponType.setText(weapon);
+		coins=coins+50;
+		coinCount.setText(""+coins);
 		option1.setText("Head to village");
 		option2.setText("Leave Riverside");
 		option3.setText("Rest");
 		option4.setText("Contuine North");
 	}
+	public void restRiver() {
+		gameState="restRiver";
+		mainTextArea.setText("You rest a bit more by the relaxing river. (You receive 5 HP)");
+		playerHP= playerHP+5;
+		hpNo.setText(""+playerHP);
+		option1.setText("Explore Riverside");
+		option2.setText("Contuine going North");
+		option3.setText("Go back");
+		option4.setText("");
 	
+	
+	}
+//	Monster encounter 
+	public void forest() {
+		gameState="forest";
+		mainTextArea.setText("You go deeper into the forest.");
+		option1.setText("Attack");
+		option2.setText("");
+		option3.setText("");
+		option4.setText("");
+	}
 	
 	public class TitleScreenHandler implements ActionListener{
 		public void actionPerformed(ActionEvent event) {
@@ -314,8 +395,10 @@ public class Game {
 		public void actionPerformed(ActionEvent event) {
 			String playerChoice = event.getActionCommand();
 			switch(gameState) {
+			
 //			decides call based on option picked
 			case "villageGate":
+//				Village gate options
 				switch(playerChoice) {
 				case "o1": talkGuard(); break;
 				case "o2": attackGuard(); break;
@@ -324,23 +407,26 @@ public class Game {
 				}
 				break;
 			case "talkGuard":
+//				Talk options
 				switch(playerChoice) {
 				case "o1": villageGate(); break;
-				case "o2": break;
-				case "o3": attackGuard(); break;
+				case "o2": attackGuard(); break;
 				}
 				break;
 			case "attackGuard":
+//				Attack options
 				switch(playerChoice) {
 				case "o1": villageGate(); break;
 				}
 				break;
 			case "bribeGuard":
+//				Bribe options
 				switch(playerChoice) {
 				case "o1": villageGate(); break;
 				}
 				break;
 			case "crossRoads":
+//				Cross Roads options
 				switch(playerChoice) {
 				case "o1": villageGate(); break;
 				case "o2": north(); break;
@@ -350,22 +436,57 @@ public class Game {
 				}
 				break;
 			case "north":
+//				North options
 				switch(playerChoice) {
 				case "o1": riverside(); break;
-				case "o2": break;
-				case "o3": break;
+				case "o2": restRiver(); break;
+				case "o3": farNorth(); break;
 				case "o4": crossRoads(); break;
 				
 			}
 				break;
+//				east options 
+			case "east":
+				switch(playerChoice) {
+				case "o1": setCamp(); break;
+				case "o2": farEast(); break;
+				case "o3": crossRoads(); break;
+				case "o4": forest(); break;
+				}
+				break;
+//				Riverside options
 			case "riverside":
 				switch(playerChoice) {
 				case "o1": villageGate2(); break;
+				case "o2": crossRoads(); break;
+				case "o3": restRiver(); break;
+				case "o4": farNorth(); break;
+				}
+				break;
+//				Riverside options
+			case "restRiver":
+				switch(playerChoice) {
+				case "o1": riverside(); break;
+				case "o2": farNorth(); break;
+				case "o3": crossRoads(); break;
+				case "o4": break;
+				}
+				break;
+			case "villageGate2":
+				switch(playerChoice) {
+				case "o1": break;
 				case "o2": break;
 				case "o3": break;
-				case "o4": crossRoads(); break;
-				}
+				case "o4": break;
 				
+				}
+			case "villageSquare":
+				switch(playerChoice) {
+				case "o1": break;
+				case "o2": break;
+				case "o3": break;
+				case "o4": break;
+				}
 	}
 		
 	}
