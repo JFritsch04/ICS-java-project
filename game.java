@@ -1,36 +1,42 @@
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 //Game class
 public class Game {
 	JFrame gamewindow;
 	Container contain;
-	JPanel titleNamePanel, startButtonPanel, dialoguePanel, optionsPanel, hotbarPanel, lowbarPanel;
-	JLabel titleNameText, hpLabel, hpNo, weaponLabel, weaponType, coinLabel, coinCount;
+	JPanel titleNamePanel, startButtonPanel, dialoguePanel, optionsPanel, hotbarPanel, lowbarPanel, healthBarPanel, imagePanel;
+	JLabel titleNameText, hpLabel, hpNo, weaponLabel, weaponType, coinLabel, coinCount, imageLabel;
 	Font titleFont = new Font("Times New Roman", Font.PLAIN, 70);
 	Font startFont = new Font("Times New Roman", Font.PLAIN, 50);
 	Font hotbarFont = new Font("Times New Roman", Font.PLAIN, 24);
 	Font buttonText = new Font("Times New Roman", Font.PLAIN, 25);
 	JButton startButton, option1, option2, option3, option4;
 	JTextArea mainTextArea;
+	JProgressBar healthBar;
 	int playerHP;
 	int coins;
 	int monsterHP;
 	int ring;
 	String weapon, gameState;
+	ImageIcon image;
 	
 	TitleScreenHandler tsHandler = new TitleScreenHandler();
 	OptionHandler optionHandler = new OptionHandler();
+	
 
 	public static void main(String[] args) {
 		new Game();
@@ -96,22 +102,22 @@ public class Game {
 		startButtonPanel.setVisible(false);
 		
 		dialoguePanel = new JPanel();
-		dialoguePanel.setBounds(100,100,600,250);
+		dialoguePanel.setBounds(50,350,430,250);
 		dialoguePanel.setBackground(Color.gray);
 		contain.add(dialoguePanel);
 		
 		//initialized  JTextArea
 		mainTextArea = new JTextArea("Text here");
-		mainTextArea.setBounds(100,100,600,250);
+		mainTextArea.setBounds(50,350,430,250);
 		mainTextArea.setBackground(Color.gray);
-		mainTextArea.setForeground(Color.yellow);
+		mainTextArea.setForeground(Color.white);
 		mainTextArea.setFont(buttonText);
 		mainTextArea.setLineWrap(true);
 		dialoguePanel.add(mainTextArea);
 		
 //		Actions/option buttons
 		optionsPanel = new JPanel();
-		optionsPanel.setBounds(250,350,300,150);
+		optionsPanel.setBounds(500,350,250,150);
 		optionsPanel.setBackground(Color.black);
 //		customized layout for buttons
 		optionsPanel.setLayout(new GridLayout(4,1));
@@ -154,28 +160,40 @@ public class Game {
 		option4.setActionCommand("o4");
 		optionsPanel.add(option4);
 		
+		healthBarPanel = new JPanel();
+		healthBarPanel.setBounds(500, 300,245,30);
+		healthBarPanel.setBackground(Color.black);
+		contain.add(healthBarPanel);
+		healthBar = new JProgressBar(0,25);
+		healthBar.setPreferredSize(new Dimension(350,40));
+		healthBar.setBackground(Color.red);
+		healthBar.setForeground(Color.green);
+		healthBarPanel.add(healthBar);
+		
+		
+		
 		hotbarPanel = new JPanel();
-		hotbarPanel.setBounds(100, 15, 670, 50);
-		hotbarPanel.setBackground(Color.gray);
-		hotbarPanel.setLayout(new GridLayout(1,4));
+		hotbarPanel.setBounds(500,550,300,25);
+		hotbarPanel.setBackground(Color.black);
+		hotbarPanel.setLayout(new GridLayout(1,2));
 		contain.add(hotbarPanel);
 		
 		lowbarPanel = new JPanel();
-		lowbarPanel.setBounds(600, 450, 170, 50);
-		lowbarPanel.setBackground(Color.gray);
+		lowbarPanel.setBounds(500,520,300,25);
+		lowbarPanel.setBackground(Color.black);
 		lowbarPanel.setLayout(new GridLayout(1,4));
 		contain.add(lowbarPanel);
 		
-//		HP Label
-		hpLabel= new JLabel("HP:");
-		hpLabel.setFont(hotbarFont);
-		hpLabel.setForeground(Color.white);
-		hotbarPanel.add(hpLabel);
-//		HP Amount
-		hpNo = new JLabel();
-		hpNo.setFont(hotbarFont);
-		hpNo.setForeground(Color.white);
-		hotbarPanel.add(hpNo);
+////		HP Label
+//		hpLabel= new JLabel("HP:");
+//		hpLabel.setFont(hotbarFont);
+//		hpLabel.setForeground(Color.white);
+//		hotbarPanel.add(hpLabel);
+////		HP Amount
+//		hpNo = new JLabel();
+//		hpNo.setFont(hotbarFont);
+//		hpNo.setForeground(Color.white);
+//		hotbarPanel.add(hpNo);
 //		Weapon Label
 		weaponLabel = new JLabel("WEAPON:");
 		weaponLabel.setFont(hotbarFont);
@@ -197,20 +215,33 @@ public class Game {
 		coinCount.setForeground(Color.white);
 		lowbarPanel.add(coinCount);
 		
+		imagePanel = new JPanel();
+		imagePanel.setBounds(50,65,427,280);
+		imagePanel.setBackground(Color.black);
+		
+		imageLabel = new JLabel();
+		image = new ImageIcon(".//res//towngate.jpg");
+		imageLabel.setIcon(image);
+		imagePanel.add(imageLabel);
+		
+		contain.add(imagePanel);
+		
+		
 		playerSetup();
 
 
 	}
-	public void playerSetup() {
+	private void playerSetup() {
 //	Player parameters
 		playerHP = 25;
 		monsterHP = 20;
 		weapon = "Worn Dagger";
 		coins = 0;
 		weaponType.setText(weapon);
-		hpNo.setText(""+ playerHP);
+//		hpNo.setText(""+ playerHP);
 		coinCount.setText(""+coins);
 		
+		healthBar.setValue(playerHP);
 		villageGate();
 		
 	}
@@ -232,12 +263,29 @@ public class Game {
 		option4.setText("Leave Village Square");
 	}
 	public void talkVillagers() {
+		gameState="talkVillagers";
+		mainTextArea.setText("You approach a young maiden and she looks at you with a smile. She offers you help, do you accept?");
+		option1.setText("Accept");
+		option2.setText("Reject");
+		option3.setText("Question");
+		option4.setText("Leave Village Square");
 		
 	}
 	public void weaponShop() {
-		
+		gameState="weaponShop";
+		mainTextArea.setText("You push open a heavy wooden door and head inside to a weaponsmith's shop. The walls are decorated with hunting memorabilia and nice weapons. A older man is waiting at the store counter and greets you with a jolly smile.");
+		option1.setText("Talk to Shop Keeper");
+		option2.setText("View inventory");
+		option3.setText("Steal");
+		option4.setText("Leave");
 	}
 	public void itemShop() {
+		gameState="itemShop";
+		mainTextArea.setText("You head inside, quickly greeted by a sweet old woman; she smiles and asks if she can help you find anything");
+		option1.setText("Talk to Shop Keeper");
+		option2.setText("View Inventory");
+		option3.setText("Steal");
+		option4.setText("Leave");
 		
 	}
 	public void restPoint() {
@@ -248,8 +296,10 @@ public class Game {
 	}
 //	Village Gate
 	public void villageGate() {
+		image = new ImageIcon(".//res//towngate.jpg");
+		imageLabel.setIcon(image);
 		gameState="villageGate";
-		mainTextArea.setText("You've approached the enterance gate \n leading into the village.\n \nYou notice the door is blocked by a guard,\n he is standing in front of you, immediately \n locking eyes with you; what will you do next?\n\n");
+		mainTextArea.setText("You've approached the enterance gate \n leading into the village.\n \nYou notice the door is blocked by a guard,\n he is standing in front of you, immediately locking eyes with you; what will you\n do next?\n\n");
 		option1.setText("Converse with Guard");
 		option2.setText("Attack guard");
 		option3.setText("Leave");
@@ -257,8 +307,10 @@ public class Game {
 		
 	} 
 	public void villageGate2() {
+		image = new ImageIcon(".//res//towngate.jpg");
+		imageLabel.setIcon(image);
 		gameState="villageGate2";
-		mainTextArea.setText("You find another enterance to the village.\n The guard by the gate seems friendlier. Guard: Welcome, I can see you are a forigen travler, please come in.");
+		mainTextArea.setText("You find another entrance to the village.\n The guard by the gate seems friendlier. Guard: Welcome, I can see you are a foreign traveler, please come in.");
 		option1.setText("Enter village");
 		option2.setText("Talk to Guard");
 		option3.setText("Go other gate");
@@ -276,7 +328,8 @@ public class Game {
 		gameState="attackGuard";
 		mainTextArea.setText("Guard: Hey!! Don't even think about it!\n\nThe Guard draws his sword and it flashes before your eyes.\n\nGuard: Get lost scumbag!!\n\n (You lost 5 HP)");
 		playerHP= playerHP-5;
-		hpNo.setText(""+playerHP);
+		healthBar.setValue(playerHP);
+//		hpNo.setText(""+playerHP);
 		option1.setText("Leave");
 		option2.setText("Apologize");
 		option3.setText("");
@@ -291,27 +344,43 @@ public class Game {
 		option3.setText("Wander around");
 		option4.setText("");
 		
+			
+		}
+	public void apologizeGuard() {
+		gameState="apologizeGuard";
+		mainTextArea.setText("You apologize for your abrupt decision; the Guard frowns and forces you to leave.");
+		option1.setText("Leave");
+		option2.setText("");
+		option3.setText("");
+		option4.setText("");
 	}
 //	Cross roads
 	public void crossRoads() {
+		image = new ImageIcon(".//res//crossroad.jpg");
+		imageLabel.setIcon(image);
 		gameState="crossRoads";
-		mainTextArea.setText("You wander away from the village towards some crossroads. You come across 3 different paths.\n\n Well now what?");
+		mainTextArea.setText("You wander away from the village towards some crossroads.\n You come across 3 different paths.\n\n Well now what?");
 		option1.setText("Return to Village");
 		option2.setText("Go North");
 		option3.setText("Go East");
 		option4.setText("Go West");
 	}
 	public void north() {
+		image = new ImageIcon(".//res//river.jpg");
+		imageLabel.setIcon(image);
 		gameState="north";
 		mainTextArea.setText("You come across a river.\n You gather some water and rest beside the river for a little while. \n\n(Your HP has restored by 5.)");
 		playerHP= playerHP+5;
-		hpNo.setText(""+playerHP);
+		healthBar.setValue(playerHP);
+//		hpNo.setText(""+playerHP);
 		option1.setText("Explore riverside");
 		option2.setText("Rest again");
 		option3.setText("Contuine going North");
 		option4.setText("Head back");
 	}
 	public void farNorth() {
+		image = new ImageIcon(".//res//void.jpg");
+		imageLabel.setIcon(image);
 		gameState="farNorth";
 		mainTextArea.setText("");
 		option1.setText("");
@@ -320,8 +389,10 @@ public class Game {
 		option4.setText("");
 	}
 	public void east() {
+		image = new ImageIcon(".//res//forest.jpg");
+		imageLabel.setIcon(image);
 		gameState="east";
-		mainTextArea.setText("You wander into a shrouded forest, you notice the sun is setting");
+		mainTextArea.setText("You wander into a shrouded forest,\n you notice the sun is setting");
 		option1.setText("Set camp");
 		option2.setText("Contuine East");
 		option3.setText("Head back");
@@ -330,31 +401,36 @@ public class Game {
 	}
 	public void setCamp() {
 		gameState="setCamp";
-		mainTextArea.setText("");
-		option1.setText("");
-		option2.setText("");
-		option3.setText("");
+		playerHP= playerHP+10;
+		healthBar.setValue(playerHP);
+		mainTextArea.setText("You set camp for the night and rest up. \nYou wake up and feel like a weight lifted off your back.\n (You restore 10 HP)");
+		option1.setText("Explore Forest");
+		option2.setText("Leave Forest");
+		option3.setText("Rest Again");
 		option4.setText("");
 	}
 	public void farEast() {
+		image = new ImageIcon(".//res//void.jpg");
+		imageLabel.setIcon(image);
 		gameState="farEast";
-		mainTextArea.setText("");
-		option1.setText("");
-		option2.setText("");
-		option3.setText("");
-		option4.setText("");
+		mainTextArea.setText("You head farther East. A cat runs up to you and seemingly greets you.");
+		option1.setText("Pet cat");
+		option2.setText("Attack cat");
+		option3.setText("Abandon cat");
+		option4.setText("Do nothing");
 	}
 	public void west() {
 		gameState="west";
-		mainTextArea.setText("");
-		option1.setText("");
-		option2.setText("");
+		mainTextArea.setText("You decide to go West, \nit's extremely foggy and it's hard to navigate. \nYou end up going in circles and seem lost.");
+		option1.setText("Turn back");
+		option2.setText("Wander");
 		option3.setText("");
 		option4.setText("");
 		
 	}
 //	Riverside
 	public void riverside() {
+		
 		gameState= "riverside";
 		mainTextArea.setText("You come across a small chest hidden in a bush. Inside was a Steel Long sword and 50 gold coins!");
 		weapon="Long Sword";
@@ -370,7 +446,8 @@ public class Game {
 		gameState="restRiver";
 		mainTextArea.setText("You rest a bit more by the relaxing river. (You receive 5 HP)");
 		playerHP= playerHP+5;
-		hpNo.setText(""+playerHP);
+		healthBar.setValue(playerHP);
+//		hpNo.setText(""+playerHP);
 		option1.setText("Explore Riverside");
 		option2.setText("Contuine going North");
 		option3.setText("Go back");
@@ -380,6 +457,8 @@ public class Game {
 	}
 //	Monster encounter 
 	public void forest() {
+		image = new ImageIcon(".//res//exploreForest.jpg");
+		imageLabel.setIcon(image);
 		gameState="forest";
 		mainTextArea.setText("You go deeper into the forest and encounter a  greater blue slime!");
 		option1.setText("Fight");
@@ -388,6 +467,8 @@ public class Game {
 		option4.setText("");
 	}
 	public void fightSlime() {
+		image = new ImageIcon(".//res//slime.jpg");
+		imageLabel.setIcon(image);
 		gameState="fightSlime";
 		mainTextArea.setText("Greater slime HP: "+ monsterHP);
 		option1.setText("Attack");
@@ -439,13 +520,16 @@ public class Game {
 		monsterDmg= new java.util.Random().nextInt(6);
 		mainTextArea.setText("You were attacked and lost " +monsterDmg+" HP! \n\nGreater slime HP: "+ monsterHP);
 		playerHP = playerHP - monsterDmg;
-		hpNo.setText(""+playerHP);
+//		hpNo.setText(""+playerHP);
+		healthBar.setValue(playerHP);
 		option1.setText("Attack");
 		option2.setText("Run");
 		option3.setText("Items");
 		option4.setText("");
 	}
 	public void winBattle() {
+		image = new ImageIcon(".//res//ring.jpg");
+		imageLabel.setIcon(image);
 		gameState="winBattle";
 		mainTextArea.setText("You defeated the monster! The Monster dropped a sapphire ring!(You obtained a sapphire ring and 70 gold coins!)");
 		ring= 1;
@@ -461,7 +545,7 @@ public class Game {
 		gameState="lossDeath";
 		mainTextArea.setText("You have no HP left, you collapse over and die.\n\n <GAME OVER!>");
 		
-		option1.setText("Enter Village");
+		option1.setText("Try again");
 		option2.setText("");
 		option3.setText("");
 		option4.setText("");
@@ -512,7 +596,7 @@ public class Game {
 						ending();
 					}
 					else {
-						talkGuard();
+						crossRoads();
 					}
 					break;
 				case "o2": attackGuard(); break;
@@ -521,13 +605,25 @@ public class Game {
 			case "attackGuard":
 //				Attack options
 				switch(playerChoice) {
-				case "o1": villageGate(); break;
+				case "o1": 
+					if(playerHP<1) {
+						lossDeath();
+					} 
+					else {
+					villageGate(); 
+				}
+				case "o2": apologizeGuard(); break;
 				}
 				break;
 			case "bribeGuard":
 //				Bribe options
 				switch(playerChoice) {
 				case "o1": villageGate(); break;
+				}
+				break;
+			case "apologizeGuard":
+				switch(playerChoice) {
+				case "o1": crossRoads(); break;
 				}
 				break;
 			case "crossRoads":
@@ -557,6 +653,15 @@ public class Game {
 				case "o2": farEast(); break;
 				case "o3": crossRoads(); break;
 				case "o4": forest(); break;
+				}
+				break;
+//				east options 
+			case "west":
+				switch(playerChoice) {
+				case "o1": crossRoads(); break;
+				case "o2": break;
+				case "o3": break;
+				case "o4": break;
 				}
 				break;
 //				Riverside options
@@ -650,6 +755,11 @@ public class Game {
 				case "o2": farEast();break;
 				case "o3": break;
 				case "o4": break;
+				}
+				break;
+			case "lossDeath":
+				switch(playerChoice) {
+				case "o1": villageGate(); break;
 				}
 				
 				
