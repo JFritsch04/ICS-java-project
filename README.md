@@ -1,3 +1,5 @@
+This project is just a demo, not all of the game options will have existing areas to go to. If you select and cannot go further close and reopen the game.
+
 ** Von Neumann Architecture It should ask inputs from the user in a console, process the input and show the output to the user.(50 Points)
 ** Two classes (one main class and another class called instantiated in main class) (40 Points)
 ** Must properly declare variables (at least two variables of different types) (20 Points)
